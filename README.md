@@ -5,6 +5,8 @@ Snapshots allow you to rollback your system to a previous state if there is a pr
 
 * Supports Ubuntu 20.04 and higher.
 * Support for Jonathan F ZFS PPA to install ZFS 2.x on Ubuntu 20.04 (support for zstd compression).
+* Support for single disk or mirror RPOOL layout
+* TODO: DATAPOOL setup
 
 
 # Usage
