@@ -799,7 +799,7 @@ systemsetupFunc_part4(){
 					  CommandLine: ro quiet loglevel=0
 				EOF
 
-				[ "${quiet_boot}" = "no" ] && \
+				[ "${quiet_boot}" = "yes" ] || \
 					sed -i 's,ro quiet,ro,' /etc/zfsbootmenu/config.yaml
 
 				## Omit systemd dracut modules to prevent ZBM boot breaking
@@ -824,7 +824,7 @@ systemsetupFunc_part4(){
 					"Boot to menu"  "zfsbootmenu:POOL=${RPOOL} zbm.import_policy=hostid zbm.set_hostid zbm.show ro quiet loglevel=0"
 				EOF
 
-				[ "${quiet_boot}" = "no" ] && \
+				[ "${quiet_boot}" = "yes" ] || \
 					sed -i 's,ro quiet,ro,' /boot/efi/EFI/ubuntu/refind_linux.conf
 
 			}
