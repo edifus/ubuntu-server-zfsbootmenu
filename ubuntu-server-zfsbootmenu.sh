@@ -124,7 +124,7 @@ identify_ubuntu_dataset_uuid(){
 ipv6_apt_live_iso_fix(){
 
 	## Try diabling ipv6 in the live iso if setting the preference to ipv4 doesn't work \
-	## to resolve slow apt get and slow debootstrap in the live Ubuntu iso.
+	## to resolve slow apt-get and slow debootstrap in the live Ubuntu iso.
 	## https://askubuntu.com/questions/620317/apt-get-update-stuck-connecting-to-security-ubuntu-com
 
 	prefer_ipv4(){
@@ -153,11 +153,13 @@ debootstrap_part1_Func(){
 	## use closest mirrors
 	## disable cdrom - remote/headless deploy may be over ipmi
 	cp /etc/apt/sources.list /etc/apt/sources.list.bak
-	sed -i 's,deb cdrom,#deb cdrom,' /etc/apt/sources.list
-	sed -i 's/http:\/\/archive/mirror:\/\/mirrors/' /etc/apt/sources.list
-	sed -i 's/http:\/\/security/mirror:\/\/mirrors/' /etc/apt/sources.list
-	sed -i 's/\/ubuntu\//\/mirrors.txt/' /etc/apt/sources.list
-	sed -i '/mirrors/ s,main restricted,main restricted universe multiverse,' /etc/apt/sources.list
+	sed -i \
+		-e 's,deb cdrom,#deb cdrom,' \
+		-e 's/http:\/\/archive/mirror:\/\/mirrors/' \
+		-e 's/http:\/\/security/mirror:\/\/mirrors/' \
+		-e 's/\/ubuntu\//\/mirrors.txt/' \
+		-e '/mirrors/ s,main restricted,main restricted universe multiverse,' \
+		/etc/apt/sources.list
 	cat /etc/apt/sources.list
 
 << 'DISABLED_OVERRIDESOURCE'
@@ -193,6 +195,8 @@ DISABLED_SSHSETUP
 	if [ "${use_zfs_ppa}" = "yes" ]; then
 		apt-get --yes --quiet install software-properties-common
 		add-apt-repository --yes --update ppa:jonathonf/zfs
+
+		## Install PPA version before we get started
 		DEBIAN_FRONTEND=noninteractive apt-get --yes --quiet install gdisk debootstrap zfs-initramfs zfsutils-linux zfs-zed
 	else
 		DEBIAN_FRONTEND=noninteractive apt-get --yes --quiet install gdisk debootstrap zfs-initramfs software-properties-common
@@ -388,7 +392,10 @@ debootstrap_createzfspools_Func(){
 	}
 
 	## Run disk operations
+	## Partition disk(s)
 	partitionsFunc
+
+	## Create root pool
 	if [ "${rpool_vdev_layout}" = "mirror" ]; then
 		echo -e "${zfspassword}" | zpool_encrypted_mirror_Func
 	elif [ "${rpool_vdev_layout}" = "single" ]; then
@@ -397,6 +404,8 @@ debootstrap_createzfspools_Func(){
 		echo "Unsupported layout provided. Exiting."
 		exit 1
 	fi
+
+	## Create system mount points on root pool
 	mountpointsFunc
 
 }
@@ -468,8 +477,8 @@ DISABLED_GETNETMASK
 
 		mkdir -p /etc/cmdline.d
 		## Added timeouts to wait for network link to fix "no carrier" errors on some systems
+		## Create bootnet interface to configure the correct nic in multi-nic environments
 		if [ "${network_static}" = "yes" ]; then
-			# Create bootnet interface to configure the correct nic in multi-nic environments
 			echo "ifname=bootnet:${ethernetmac} ip=${ipv4_cidr%%/*}::${ipv4_gateway}:${ipv4_cidr##*/}:${new_hostname}:bootnet:none nameserver=${ipv4_dns1} nameserver=${ipv4_dns2} rd.neednet=1 rd.net.timeout.ifup=60 rd.net.timeout.carrier=60" \
 				> /etc/cmdline.d/dracut-network.conf
 		else
@@ -584,16 +593,12 @@ DISABLED_GETNETMASK
 systemsetupFunc_part1(){
 
 	## System configuration
-
 	## Configure hostname
 	echo "${new_hostname}" > "${mountpoint}"/etc/hostname
 	echo 127.0.1.1       "${new_hostname}" >> "${mountpoint}"/etc/hosts
 
 	## Configure network interface
-
-	## Get ethernet interface
 	ethernetinterface="$(basename "$(find /sys/class/net -maxdepth 1 -mindepth 1 -name "${ethprefix}*")")"
-	echo "${ethernetinterface}"
 
 	configureStatic(){
 
@@ -988,10 +993,6 @@ distroinstall(){
 	## Remove snapd
 	apt-get --yes --quiet remove --purge snapd
 
-	## Clean up apt and unneeded packages
-	apt-get --yes --quiet clean
-	apt-get --yes --quiet autoremove --purge
-
 	## Update locate search index
 	updatedb
 
@@ -1076,6 +1077,10 @@ pyznapinstall(){
 
 	}
 	snapshotmanagement
+
+	## Clean up apt and unneeded packages
+	apt-get --yes --quiet clean
+	apt-get --yes --quiet autoremove --purge
 
 }
 
@@ -1243,6 +1248,7 @@ createdatapool(){
 
 }
 TODO_CREATEDATAPOOL
+
 
 ## Start script
 
