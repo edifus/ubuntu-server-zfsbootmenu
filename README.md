@@ -3,9 +3,10 @@ This script creates an ubuntu server installation using the ZFS filesystem. The 
 
 Snapshots allow you to rollback your system to a previous state if there is a problem. The system automatically creates snapshots on a timer and also when the system is updated with apt. Snapshots are pruned over time to keep fewer older snapshots.
 
-* Supports Ubuntu 20.04 and higher.
-* Support for Jonathan F ZFS PPA to install ZFS 2.x on Ubuntu 20.04 (support for zstd compression).
+* Supports Ubuntu 20.04 and higher
+* Support for Jonathan F ZFS PPA to install ZFS 2.x on Ubuntu 20.04 (support for zstd compression)
 * Support for single disk or mirror RPOOL layout
+* Support for static IP/DHCP configuration (will also configure dracut-network if 'remoteaccess' is setup)
 * TODO: DATAPOOL setup
 
 
