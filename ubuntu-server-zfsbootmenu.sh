@@ -193,9 +193,9 @@ DISABLED_SSHSETUP
 	if [ "${use_zfs_ppa}" = "yes" ]; then
 		apt-get --yes --quiet install software-properties-common
 		add-apt-repository --yes --update ppa:jonathonf/zfs
-		DEBIAN_FRONTEND=noninteractive apt-get --yes --quiet install zfs-initramfs zfsutils-linux zfs-zed gdisk debootstrap
+		DEBIAN_FRONTEND=noninteractive apt-get --yes --quiet install gdisk debootstrap zfs-initramfs zfsutils-linux zfs-zed
 	else
-		DEBIAN_FRONTEND=noninteractive apt-get --yes --quiet install debootstrap software-properties-common gdisk zfs-initramfs
+		DEBIAN_FRONTEND=noninteractive apt-get --yes --quiet install gdisk debootstrap zfs-initramfs software-properties-common
 	fi
 
 	if service --status-all | grep -Fq 'zfs-zed'; then
