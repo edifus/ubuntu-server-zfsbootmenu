@@ -1,0 +1,4 @@
+# Exclude template from gitignore
+!.variables.template
+
+.variables

@@ -1,0 +1,134 @@
+### Variables
+
+
+##  BEGIN Installation script settings
+#   Installation log filename
+install_log="ubuntu_setup_zfs_root.log"
+
+#   Installation log location
+log_loc="/var/log"
+
+#   debootstrap install location
+mountpoint="/mnt"
+
+#   Enable remoteaccess to initramfs during first boot
+#   Recommend leaving as "no" - See notes in script header
+#   Run script with 'remoteaccess' after 'postreboot' step
+remoteaccess="no"
+##  END Installation script settings
+
+
+##  BEGIN Configure Ubuntu
+#   Version of Desktop Live CD booted/being installed
+#   20.04 is "focal"
+#   21.04 is "hirsute"
+#   21.10 is "impish" (untested)
+ubuntu_version="focal"
+
+#   Use Jonathan F ZFS PPA
+#   https://launchpad.net/~jonathonf/+archive/ubuntu/zfs
+#   Allow 'zstd' compression on Ubuntu 20.04
+use_zfs_ppa="yes"
+
+#   Install desktop GUI or CLI
+#   Set to "yes" to install GUI
+#   Set to "no" to install CLI
+install_gui="no"
+
+#   Username/password for first user
+username="user"
+user_password="password"
+
+#   Root user password
+root_password="password"
+
+#   Hostname for server
+#   An underscore is DNS non-compliant
+new_hostname="hostname"
+
+#   Show/hide boot sequence
+#   Set to "yes" to hide boot sequence
+#   Set to "no" to show boot sequence
+quiet_boot="no"
+
+#   Install openssh-server
+openssh="yes"
+
+#   First letter of ethernet interface
+#   Used to setup networking
+ethprefix="en"
+
+#   Network setup mode
+#   Set to "yes" for static IP
+#   Set to "no" for dhcp
+network_static="yes"
+
+#   Static IP address
+#   Needed if network_mode is "static"
+#   Enter in CIDR format - 0.0.0.0/0
+ipv4_cidr="0.0.0.0/0"
+
+#   Static IP gateway
+#   Needed if network_mode is "static"
+ipv4_gateway="0.0.0.0"
+
+#   Static IP DNS1
+#   Needed if network_mode is "static"
+ipv4_dns1="1.1.1.1"
+
+#   Static IP DNS2
+#   Needed if network_mode is "static"
+ipv4_dns2="1.0.0.1"
+
+#   Locale/timezone setup
+locale="en_US.UTF-8"
+timezone="Etc/Greenwich"
+##  END Configure Ubuntu
+
+
+##  BEGIN rpool disk info
+#   Single disk or mirror
+#   Set to "single" for single disk install
+#   Set to "mirror" for mirror disk install
+rpool_vdev_layout="mirror"
+
+#   ZFS ashift
+#   9  means 512B sectors (used by all ancient drives and some enterprise nvme drives)
+#   12 means 4KiB sectors (used by most modern hard drives) [default]
+#   13 means 8KiB sectors (used by some modern SSDs)
+zfs_rpool_ashift="12"
+
+#   EFI boot loader partition size in mebibytes (MiB)
+EFI_boot_size="512"
+
+#   Swap partition size in mebibytes (MiB)
+swap_size="500"
+##  END rpool disk info
+
+
+##  BEGIN ZFS zpool settings
+#   ZFS root pool name
+RPOOL="rpool"
+
+#   ZFS compression
+#   lz4 is the default (zfs <= 0.8x)
+#   zstd may offer better compression at a cost of higher cpu usage (zfs > 2.0 only)
+zfs_compression="zstd"
+
+#   Password for root pool
+#   Minimum 8 characters
+zfspassword="encrypted"
+##  END ZFS zpool settings
+
+
+##  BEGIN ZFSBootMenu settings
+#   Timeout in seconds for rEFInd boot screen until default choice selected
+timeout_rEFInd="5"
+
+#   Timeout in seconds for zfsbootmenu when no remote access enabled
+timeout_zbm_no_remote_access="15"
+
+#   Timeout in seconds for zfsbootmenu when remote access enabled
+#   Configuring timeout of (-1) will leave remote access enabled until unlocked
+timeout_zbm_remote_access="-1"
+##  END ZFSBootMenu settings
