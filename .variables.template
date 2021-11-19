@@ -129,6 +129,6 @@ timeout_rEFInd="5"
 timeout_zbm_no_remote_access="15"
 
 #   Timeout in seconds for zfsbootmenu when remote access enabled
-#   Configuring timeout of (-1) will leave remote access enabled until unlocked
+#   Configuring timeout of (-1) is the same as configuring zbm.show
 timeout_zbm_remote_access="-1"
 ##  END ZFSBootMenu settings
